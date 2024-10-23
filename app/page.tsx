@@ -1,6 +1,7 @@
 "use client"
 
 import { useRef, useState } from "react"
+import { motion } from "framer-motion"
 import {
   Heart,
   Image as ImageIcon,
@@ -57,15 +58,15 @@ export default function Component() {
   const [ads, setAds] = useState([
     {
       id: 1,
-      title: "Learn React",
-      description: "Master React in 30 days!",
-      imageUrl: "https://placecats.com/200/100",
+      title: "Lovely Dog in the Cup",
+      description: "Couldn't get enough dogs",
+      image: "https://placedog.net/480/480?id=12",
     },
     {
       id: 2,
-      title: "Web Dev Conference",
-      description: "Join the biggest web dev event of the year!",
-      imageUrl: "https://placecats.com/200/100",
+      title: "Twin Dogs",
+      description: "Hi dogs",
+      image: "https://placedog.net/480/480?id=2",
     },
   ])
 
@@ -83,10 +84,52 @@ export default function Component() {
     }
   }
 
-  const handleTweet = () => {
+  const handleTweet = async () => {
     // Here you would typically send the tweet content and file to your backend
     console.log("Tweet content:", tweetContent)
     console.log("Selected file:", selectedFile)
+
+    const formData = new FormData()
+
+    formData.append("tweet", tweetContent)
+    formData.append("image", selectedFile)
+
+    const res = await fetch("/api/post-tweet", {
+      method: "POST",
+      body: formData,
+    })
+
+    const result = await res.json()
+
+    if (result.success) {
+      setTweets(
+        [
+          {
+            id: Date.now(),
+            author: "Story Mover",
+            handle: "@storyMover",
+            content: tweetContent,
+            image: `/api/file?fileName=${result.imageFileName}`,
+            likes: 0,
+            retweets: 0,
+            comments: 0,
+          },
+        ].concat(tweets)
+      )
+
+      // prepend ad
+      setAds(
+        [
+          {
+            id: Date.now(),
+            title: tweetContent,
+            description: tweetContent,
+            image: `/api/file?fileName=${result.adFileName}`,
+          },
+        ].concat(ads)
+      )
+    }
+
     // Reset the form
     setTweetContent("")
     setSelectedFile(null)
@@ -142,7 +185,13 @@ export default function Component() {
           </div>
           <div className="space-y-6">
             {tweets.map((tweet) => (
-              <div key={tweet.id} className="bg-card rounded-lg shadow-md p-4">
+              <motion.div
+                initial={{ opacity: "0%" }}
+                animate={{ opacity: "100%" }}
+                transition={{ duration: 2 }}
+                key={tweet.id}
+                className="bg-card rounded-lg shadow-md p-4"
+              >
                 <div className="flex items-center mb-2">
                   <Avatar className="mr-2">
                     <AvatarImage
@@ -159,7 +208,17 @@ export default function Component() {
                     </p>
                   </div>
                 </div>
-                <p className="mb-4">{tweet.content}</p>
+                <p className="mb-4 whitespace-pre-wrap">{tweet.content}</p>
+                {tweet.image && (
+                  <div className="mb-4">
+                    <img
+                      src={tweet.image}
+                      alt="Tweet image"
+                      className="w-full h-auto rounded-lg object-cover"
+                      style={{ maxHeight: "400px" }}
+                    />
+                  </div>
+                )}
                 <div className="flex justify-between text-muted-foreground">
                   <Button variant="ghost" size="sm">
                     <MessageCircle className="mr-1 h-4 w-4" />
@@ -177,7 +236,7 @@ export default function Component() {
                     <Share className="h-4 w-4" />
                   </Button>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -185,7 +244,7 @@ export default function Component() {
           <div className="bg-card rounded-lg shadow-md p-4 mb-8">
             <h2 className="text-xl font-semibold mb-4">Who to follow</h2>
             <div className="space-y-4">
-              {["Alice", "Bob", "Charlie"].map((name) => (
+              {["Alice", "Bob"].map((name) => (
                 <div key={name} className="flex items-center justify-between">
                   <div className="flex items-center">
                     <Avatar className="mr-2">
@@ -210,20 +269,22 @@ export default function Component() {
           </div>
           <div className="space-y-6">
             {ads.map((ad) => (
-              <div key={ad.id} className="bg-card rounded-lg shadow-md p-4">
+              <motion.div
+                initial={{ opacity: "0%" }}
+                animate={{ opacity: "100%" }}
+                transition={{ duration: 2 }}
+                key={ad.id}
+                className="bg-card rounded-lg shadow-md p-4"
+              >
                 <img
-                  src={ad.imageUrl}
+                  src={ad.image}
                   alt={ad.title}
-                  className="w-full h-32 object-cover rounded-md mb-2"
+                  className="w-full h-64 object-cover rounded-md mb-2"
                 />
-                <h3 className="font-semibold mb-1">{ad.title}</h3>
-                <p className="text-sm text-muted-foreground mb-2">
-                  {ad.description}
-                </p>
                 <Button variant="outline" size="sm" className="w-full">
                   Learn More
                 </Button>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
