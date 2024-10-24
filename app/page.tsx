@@ -112,8 +112,8 @@ export default function Component() {
         [
           {
             id: Date.now(),
-            author: "Story Mover",
-            handle: "@storyMover",
+            author: "Move Stories Forward",
+            handle: "@StoryMover",
             content: tweetContent,
             image: `/api/file?fileName=${result.imageFileName}`,
             likes: 0,
@@ -131,6 +131,7 @@ export default function Component() {
             title: tweetContent,
             description: tweetContent,
             image: `/api/file?fileName=${result.adFileName}`,
+            location: result.location,
           },
         ].concat(ads)
       )
@@ -220,7 +221,7 @@ export default function Component() {
                     <img
                       src={tweet.image}
                       alt="Tweet image"
-                      className="w-full h-auto rounded-lg object-cover"
+                      className="w-auto h-48 rounded-lg object-cover"
                       style={{ maxHeight: "400px" }}
                     />
                   </div>
@@ -288,7 +289,7 @@ export default function Component() {
                   className="w-full h-64 object-cover rounded-md mb-2"
                 />
                 <Button variant="outline" size="sm" className="w-full">
-                  Learn More
+                  {ad.location ? `→ Get yours at ${ad.location}` : "Learn More"}
                 </Button>
               </motion.div>
             ))}

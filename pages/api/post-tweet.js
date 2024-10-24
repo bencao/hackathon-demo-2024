@@ -17,6 +17,24 @@ export const config = {
   },
 }
 
+async function getCurrentGeoInfo() {
+  const resp = await fetch("http://ip-api.com/json/")
+  const data = await resp.json()
+
+  return data
+}
+
+function mapGeoInfoToLocation(geoInfo) {
+  if (geoInfo.countryCode === "US" && geoInfo.region === "NJ") {
+    if (geoInfo.org === "Extreme Reach Inc") {
+      return "Macy's Herald Square"
+    }
+    return "Macy's Short Hills Mall"
+  }
+
+  return "Macy's Herald Square"
+}
+
 async function retrieveImage(productId, referenceImageId) {
   const formattedName = productSearchClient.referenceImagePath(
     PROJECT_ID,
@@ -94,11 +112,11 @@ export default async function handler(req, res) {
         })
       }
 
-      console.log("files", files)
-
       const file = files.image[0] // Assuming the file input name is 'file'
 
       const matchingProducts = await searchProduct(file.filepath)
+
+      console.log("matching products", matchingProducts)
 
       if (matchingProducts.length > 0) {
         const firstProduct = matchingProducts[0]
@@ -117,10 +135,13 @@ export default async function handler(req, res) {
 
         await downloadFile(bucketName, bucketPath, adLocalFileName)
 
+        const geoInfo = await getCurrentGeoInfo()
+
         res.status(200).json({
           success: true,
           imageFileName: file.filepath,
           adFileName: adLocalFileName,
+          location: mapGeoInfoToLocation(geoInfo),
         })
       } else {
         res.status(200).json({
