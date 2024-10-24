@@ -92,7 +92,10 @@ export default function Component() {
     const formData = new FormData()
 
     formData.append("tweet", tweetContent)
-    formData.append("image", selectedFile)
+
+    if (selectedFile) {
+      formData.append("image", selectedFile)
+    }
 
     const res = await fetch("/api/post-tweet", {
       method: "POST",
