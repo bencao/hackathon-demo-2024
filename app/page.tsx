@@ -28,6 +28,7 @@ export default function Component() {
       author: "John Doe",
       handle: "@johndoe",
       content: "Just finished a great coding session! #webdev #reactjs",
+      image: null,
       likes: 15,
       retweets: 5,
       comments: 3,
@@ -38,6 +39,7 @@ export default function Component() {
       handle: "@janesmith",
       content:
         "Excited to announce my new project! Stay tuned for more details. 🚀",
+      image: null,
       likes: 32,
       retweets: 12,
       comments: 8,
@@ -48,6 +50,7 @@ export default function Component() {
       handle: "@devguru",
       content:
         "Top 5 VS Code extensions every developer should have:\n\n1. ESLint\n2. Prettier\n3. GitLens\n4. Live Server\n5. Code Spell Checker\n\nWhat are your must-have extensions? #coding #vscode",
+      image: null,
       likes: 78,
       retweets: 25,
       comments: 14,
